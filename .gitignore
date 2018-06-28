@@ -18,9 +18,6 @@ yarn-error.log*
 
 # TODO: review these ones
 
-# TODO: refactor
-rpcgen/
-
 # Runtime data
 pids
 *.pid

@@ -37,11 +37,17 @@
     "nsp": "^3.2.1",
     "nyc": "^12.0.2",
     "pre-commit": "^1.2.2",
+    "rpcgen": "github:DaniGuardiola/rpcgen",
     "standard": "^11.0.1",
     "typescript": "^2.8.0"
   },
   "scripts": {
-    "build": "tsc -p ./",
+    "build-rpc1": "rpcgen -i fixture/idl/protocol_v1.xml -t fixture/template/protocol.ts.tmpl > src/lib/electrum_protocol_v1.ts",
+    "build-rpc2": "rpcgen -i fixture/idl/protocol_v2.xml -t fixture/template/protocol.ts.tmpl > src/lib/electrum_protocol_v2.ts",
+    "build-rpc3": "rpcgen -i fixture/idl/protocol_v3.xml -t fixture/template/protocol.ts.tmpl > src/lib/electrum_protocol_v3.ts",
+    "build-rpc4": "rpcgen -i fixture/idl/protocol_v4.xml -t fixture/template/protocol.ts.tmpl > src/lib/electrum_protocol_v4.ts",
+    "build-rpc": "npm run build-rpc1 -s && npm run build-rpc2 -s && npm run build-rpc3 -s && npm run build-rpc4 -s",
+    "build": "npm run build-rpc -s && tsc -p ./",
     "lint": "standard",
     "fix": "standard --fix",
     "test": "nyc mocha ./dist/test",
@@ -52,7 +58,7 @@
     "check-security": "nsp check",
     "check-deps": "npm-check -p",
     "checklist": "npm run build -s && npm run lint -s && npm test -s && npm run coverage -s && npm run check-security -s && npm run check-deps -s",
-    "docs": "docco --output docs src/*.ts src/**/*.ts"
+    "docs": "rm -r docs && docco --output docs src/*.ts src/**/*.ts"
   },
   "pre-commit": [
     "build",
