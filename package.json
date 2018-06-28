@@ -38,6 +38,8 @@
     "nyc": "^12.0.2",
     "pre-commit": "^1.2.2",
     "rpcgen": "github:DaniGuardiola/rpcgen",
+    "tslint": "^5.10.0",
+    "tslint-config-standard": "^7.1.0",
     "typescript": "^2.8.0"
   },
   "scripts": {
@@ -56,7 +58,7 @@
     "check-deps": "npm-check -p",
     "checklist": "npm run build -s -s && npm test -s && npm run coverage -s && npm run check-security -s && npm run check-deps -s",
     "docs": "rm -rf docs && docco --output docs src/*.ts src/**/*.ts",
-    "cleanup": "rm -rf docs dist .nyc_output coverage coverage-html"
+    "cleanup": "rm -rf docs dist .nyc_output coverage coverage-html node_modules"
   },
   "pre-commit": [
     "build",
