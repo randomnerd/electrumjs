@@ -58,7 +58,8 @@
     "check-security": "nsp check",
     "check-deps": "npm-check -p",
     "checklist": "npm run build -s && npm run lint -s && npm test -s && npm run coverage -s && npm run check-security -s && npm run check-deps -s",
-    "docs": "rm -r docs && docco --output docs src/*.ts src/**/*.ts"
+    "docs": "rm -r docs && docco --output docs src/*.ts src/**/*.ts",
+    "cleanup": "rm -rf docs dist .nyc_output coverage coverage-html"
   },
   "pre-commit": [
     "build",
