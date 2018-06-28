@@ -1,22 +1,22 @@
 import { Socket } from 'net'
 import { TLSSocket } from 'tls'
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 
 const TIMEOUT = 10000
 
 export class TimeoutError implements Error {
-    public name = 'TimeoutError';
-    errno: string
-    code: string
-    connect: boolean
-    constructor (public message: string) {
-      this.errno = ''
-      this.code = ''
-      this.connect = false
-    }
-    toString () {
-      return this.name + ': ' + this.message
-    }
+  public name = 'TimeoutError'
+  errno: string
+  code: string
+  connect: boolean
+  constructor (public message: string) {
+    this.errno = ''
+    this.code = ''
+    this.connect = false
+  }
+  toString () {
+    return this.name + ': ' + this.message
+  }
 }
 
 const getSocket = (protocol: string, options: any): Socket => {
@@ -30,14 +30,14 @@ const getSocket = (protocol: string, options: any): Socket => {
   throw new Error('unknown protocol')
 }
 
-export interface ISocketEvent{
-    onEnd: (e: Error) => void
-    onError: (e: Error) => void
-    onRecv: (chunk:string) => void
-    onConnect: () => void
-    onClose: (e: Error) => void
-    subscribe: EventEmitter
-    request: (method: string, params: Array<any>) => Promise<any>
+export interface ISocketEvent {
+  onEnd: (e: Error) => void
+  onError: (e: Error) => void
+  onRecv: (chunk: string) => void
+  onConnect: () => void
+  onClose: (e: Error) => void
+  subscribe: EventEmitter
+  request: (method: string, params: Array<any>) => Promise<any>
 }
 
 export const initSocket = (ev: ISocketEvent, protocol: string, options: any): Socket => {
@@ -54,7 +54,7 @@ export const initSocket = (ev: ISocketEvent, protocol: string, options: any): So
     ev.onClose(e)
   })
   conn.on('timeout', () => {
-    const e:TimeoutError = new TimeoutError('ETIMEDOUT')
+    const e: TimeoutError = new TimeoutError('ETIMEDOUT')
     e.errno = 'ETIMEDOUT'
     e.code = 'ETIMEDOUT'
     e.connect = false

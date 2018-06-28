@@ -1,17 +1,17 @@
 import * as assert from 'assert'
-import {createRecursiveParser, PARSE_STATUS} from '../lib/parser'
+import { createRecursiveParser, PARSE_STATUS } from '../lib/parser'
 
-type callback = (Error?) => void
+// type callback = (Error?) => void
 
 describe('parser success', () => {
   it('complete chunk done', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\n'
-    const check_pattern = ['aaaaa']
+    const checkPattern = ['aaaaa']
     const f = createRecursiveParser('\n')
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -25,10 +25,10 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\nbb\nccccccccc\ndddddddddd\neeeeee\n'
-    const check_pattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
+    const checkPattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
     const f = createRecursiveParser('\n', 5)
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -42,10 +42,10 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\nbb\nccccccccc\ndddddddddd\neeeeee\n'
-    const check_pattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
+    const checkPattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
     const f = createRecursiveParser('\n', 4)
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -59,11 +59,11 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa'
-    const check_pattern = ['aaaaa']
+    const checkPattern = ['aaaaa']
     const f = createRecursiveParser('\n')
     const result = f(chunk, (data, depth) => {
       assert(0)
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -77,10 +77,10 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\nbb'
-    const check_pattern = ['aaaaa', 'bb']
+    const checkPattern = ['aaaaa', 'bb']
     const f = createRecursiveParser('\n')
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -94,10 +94,10 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\nbb\nccccccccc\ndddddddddd\neeeeee'
-    const check_pattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
+    const checkPattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
     const f = createRecursiveParser('\n', 5)
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true
@@ -111,10 +111,10 @@ describe('parser success', () => {
     let max = -1
     let count = 0
     const chunk = 'aaaaa\nbb\nccccccccc\ndddddddddd\neeeeee'
-    const check_pattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
+    const checkPattern = ['aaaaa', 'bb', 'ccccccccc', 'dddddddddd', 'eeeeee']
     const f = createRecursiveParser('\n', 3)
     const result = f(chunk, (data, depth) => {
-      assert(data === check_pattern[depth])
+      assert(data === checkPattern[depth])
       max = depth
       ++count
       return true

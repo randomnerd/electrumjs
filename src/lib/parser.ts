@@ -1,19 +1,19 @@
 import * as assert from 'assert'
 
-export enum PARSE_STATUS{
+export enum PARSE_STATUS {
     DONE,
     SUSPEND,
-    ABEND,
+    ABEND
 }
 
-export interface IParseContext{
-    code: PARSE_STATUS
-    chunk: string
+export interface IParseContext {
+  code: PARSE_STATUS
+  chunk: string
 }
 
-interface IParseOption{
-    delimiter: string
-    max_depth: number
+interface IParseOption {
+  delimiter: string
+  maxDepth: number
 }
 
 export type chunk_on_complete = (data: string, depth: number) => boolean
@@ -21,26 +21,26 @@ export type parser = (chunk: string, callback: chunk_on_complete) => IParseConte
 
 const recursiveParser = (depth: number, chunk: string, callback: chunk_on_complete, option: IParseOption): IParseContext => {
   if (chunk.length === 0) {
-    return {code: PARSE_STATUS.DONE, chunk: chunk}
+    return { code: PARSE_STATUS.DONE, chunk: chunk }
   }
-  if (depth >= option.max_depth) {
-    return {code: PARSE_STATUS.SUSPEND, chunk: chunk}
+  if (depth >= option.maxDepth) {
+    return { code: PARSE_STATUS.SUSPEND, chunk: chunk }
   }
-  const chunk_list: Array<string> = chunk.split(option.delimiter)
-  if (chunk_list.length === 1) {
-    return {code: PARSE_STATUS.DONE, chunk: chunk}
+  const chunkList: Array<string> = chunk.split(option.delimiter)
+  if (chunkList.length === 1) {
+    return { code: PARSE_STATUS.DONE, chunk: chunk }
   }
-  assert(chunk_list.length !== 0)
-  const complete_data: string = chunk_list[0]
-  const next_chunk_list: string = chunk_list.slice(1).join(option.delimiter)
-  const result: boolean = callback(complete_data, depth)
+  assert(chunkList.length !== 0)
+  const completeData: string = chunkList[0]
+  const nextChunkList: string = chunkList.slice(1).join(option.delimiter)
+  const result: boolean = callback(completeData, depth)
   if (!result) {
-    return {code: PARSE_STATUS.ABEND, chunk: chunk}
+    return { code: PARSE_STATUS.ABEND, chunk: chunk }
   }
-  return recursiveParser(depth + 1, next_chunk_list, callback, option)
+  return recursiveParser(depth + 1, nextChunkList, callback, option)
 }
 
-export const createRecursiveParser = (delimiter: string, max_depth: number = 10): parser => {
-  assert(max_depth > 0)
-  return (chunk: string, callback: chunk_on_complete): IParseContext => recursiveParser(0, chunk, callback, { delimiter, max_depth })
+export const createRecursiveParser = (delimiter: string, maxDepth: number = 10): parser => {
+  assert(maxDepth > 0)
+  return (chunk: string, callback: chunk_on_complete): IParseContext => recursiveParser(0, chunk, callback, { delimiter, maxDepth })
 }
