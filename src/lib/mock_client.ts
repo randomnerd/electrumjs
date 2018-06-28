@@ -3,9 +3,9 @@ import { ISocketClient } from './socket_helper'
 import { JsonMessageParser } from './json_message_parser'
 import { type2, util2 } from 'jsonrpc-spec'
 
-type async_callback = (e: null | Error, message?: any) => void
+type asyncCallback = (e: null | Error, message?: any) => void
 
-const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): async_callback => {
+const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): asyncCallback => {
   return (err, result) => {
     if (err) reject(err)
     else resolve(result)
@@ -13,23 +13,23 @@ const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): a
 }
 
 export class MockClient implements ISocketClient {
-  private seq: number
+  private sequence: number
   // private port: number
   // private host: string
-  private callbackMessageTable: { [key: string]: async_callback }
-  private jmp: JsonMessageParser
+  private callbackMessageTable: { [key: string]: asyncCallback }
+  private jsonMessageParser: JsonMessageParser
   private status: number
   public subscribe: EventEmitter
-  private conn: boolean
+  private connection: boolean
 
   constructor () {
-    this.seq = 0
+    this.sequence = 0
     // this.port = 3333
     // this.host = 'test.example.com'
     this.callbackMessageTable = {}
     this.subscribe = new EventEmitter()
-    this.conn = false
-    this.jmp = new JsonMessageParser((obj: any): void => {
+    this.connection = false
+    this.jsonMessageParser = new JsonMessageParser((obj: any): void => {
       const type = util2.autoDetect(obj)
       switch (type) {
         case type2.JSON_TYPE.BATCH:
@@ -56,9 +56,9 @@ export class MockClient implements ISocketClient {
       return Promise.resolve()
     }
     this.status = 1
-    this.conn = true
+    this.connection = true
     const loop = () => {
-      if (this.conn) {
+      if (this.connection) {
         setTimeout(() => loop(), 1000)
       }
     }
@@ -71,7 +71,7 @@ export class MockClient implements ISocketClient {
       return
     }
     this.status = 0
-    this.conn = false
+    this.connection = false
   }
 
   injectResponse (msg: string): void {
@@ -83,7 +83,7 @@ export class MockClient implements ISocketClient {
       return Promise.reject(new Error('ESOCKET'))
     }
     return new Promise<T2>((resolve, reject) => {
-      const id: number = ++this.seq
+      const id: number = ++this.sequence
       // const req: type2.IRequest<T1> = util2.makeRequest<T1>(id, method, params)
       // const content: string = [JSON.stringify(req), '\n'].join('')
       this.callbackMessageTable[id] = createPromiseResult(resolve, reject)
@@ -95,7 +95,7 @@ export class MockClient implements ISocketClient {
     if (obj.id === null) {
       return
     }
-    const cb: async_callback = this.callbackMessageTable[obj.id]
+    const cb: asyncCallback = this.callbackMessageTable[obj.id]
     if (cb) {
       delete this.callbackMessageTable[obj.id]
       switch (type) {
@@ -131,7 +131,7 @@ export class MockClient implements ISocketClient {
 
   onClose (): void {
     Object.keys(this.callbackMessageTable).forEach((key) => {
-      const cb: async_callback = this.callbackMessageTable[key]
+      const cb: asyncCallback = this.callbackMessageTable[key]
       cb(new Error('close connect'))
       delete this.callbackMessageTable[key]
     })
@@ -139,7 +139,7 @@ export class MockClient implements ISocketClient {
 
   onRecv (chunk: string): void {
     try {
-      this.jmp.run(chunk)
+      this.jsonMessageParser.run(chunk)
     } catch (e) {
       //           this.conn.on('error', e)
     }

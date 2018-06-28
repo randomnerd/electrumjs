@@ -84,7 +84,8 @@ export const initSocket = (client: ISocketClient, protocol: string, options: any
   return connection
 }
 
-export const connectSocket = (connection: Socket, port: number, host: string): Promise<void> => {
+// connects a Socket instance and resolves when the connection is sucessful
+export const asyncSocketConnect = (connection: Socket, port: number, host: string): Promise<void> => {
   return new Promise((resolve: () => void, reject: (e: Error) => void) => {
     const errorHandler = (e: Error) => reject(e)
     connection.connect(port, host, () => {

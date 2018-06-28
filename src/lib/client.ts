@@ -1,12 +1,12 @@
 import { Socket } from 'net'
 import { EventEmitter } from 'events'
-import { initSocket, connectSocket, ISocketClient } from './socket_helper'
+import { initSocket, asyncSocketConnect, ISocketClient } from './socket_helper'
 import { JsonMessageParser } from './json_message_parser'
 import { type2, util2 } from 'jsonrpc-spec'
 
-type async_callback = (e: null | Error, message?: any) => void
+type asyncCallback = (e: null | Error, message?: any) => void
 
-const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): async_callback => {
+const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): asyncCallback => {
   return (err, result) => {
     if (err) reject(err)
     else resolve(result)
@@ -17,7 +17,7 @@ export class Client implements ISocketClient {
   private sequence: number
   private port: number
   private host: string
-  private callbackMessageTable: { [key: string]: async_callback }
+  private callbackMessageTable: { [key: string]: asyncCallback }
   private connection: Socket
   private jsonMessageParser: JsonMessageParser
   private status: number
@@ -53,11 +53,10 @@ export class Client implements ISocketClient {
   }
 
   connect (): Promise<void> {
-    if (this.status) {
-      return Promise.resolve()
-    }
+    if (this.status) return Promise.resolve()
     this.status = 1
-    return connectSocket(this.connection, this.port, this.host)
+
+    return asyncSocketConnect(this.connection, this.port, this.host)
   }
 
   close (): void {
@@ -86,7 +85,7 @@ export class Client implements ISocketClient {
     if (obj.id === null) {
       return
     }
-    const cb: async_callback = this.callbackMessageTable[obj.id]
+    const cb: asyncCallback = this.callbackMessageTable[obj.id]
     if (cb) {
       delete this.callbackMessageTable[obj.id]
       switch (type) {
@@ -113,7 +112,7 @@ export class Client implements ISocketClient {
     this.subscribe.emit(message.method, message.params)
   }
   private onMessageBatchResponse (obj: Array<object>): void {
-      // don't support batch request
+    // TODO: support for batch responses
   }
 
   onConnect (): void {
@@ -122,7 +121,7 @@ export class Client implements ISocketClient {
 
   onClose (): void {
     Object.keys(this.callbackMessageTable).forEach((key) => {
-      const cb: async_callback = this.callbackMessageTable[key]
+      const cb: asyncCallback = this.callbackMessageTable[key]
       cb(new Error('close connect'))
       delete this.callbackMessageTable[key]
     })
