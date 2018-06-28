@@ -1,10 +1,10 @@
-import { IParseContext, PARSE_STATUS, chunk_on_complete, createRecursiveParser } from './parser'
+import { IParseContext, PARSE_STATUS, chunkHandler, createRecursiveParser, parser } from './parser'
 
-const lineParser = createRecursiveParser('\n', 20)
+const lineParser: parser = createRecursiveParser('\n', 20)
 
 export class JsonMessageParser {
   private chunkBuffer: string
-  private callback: chunk_on_complete
+  private callback: chunkHandler
   constructor (messageCallback: (obj: Object) => void) {
     this.chunkBuffer = ''
     this.callback = (data: string, depth: number): boolean => {
@@ -16,6 +16,7 @@ export class JsonMessageParser {
       return true
     }
   }
+
   run (chunk: string): void {
     let chunkBuffer = this.chunkBuffer + chunk
     while (true) {

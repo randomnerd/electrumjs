@@ -14,23 +14,23 @@ const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): a
 }
 
 export class Client implements ISocketEvent {
-  private seq: number
+  private sequence: number
   private port: number
   private host: string
   private callbackMessageTable: { [key: string]: async_callback }
-  private conn: Socket
-  private jmp: JsonMessageParser
+  private connection: Socket
+  private jsonMessageParser: JsonMessageParser
   private status: number
   public subscribe: EventEmitter
 
   constructor (port: number, host: string, protocol: string = 'tcp', options: any = void 0) {
-    this.seq = 0
+    this.sequence = 0
     this.port = port
     this.host = host
     this.callbackMessageTable = {}
     this.subscribe = new EventEmitter()
-    this.conn = initSocket(this, protocol, options)
-    this.jmp = new JsonMessageParser((obj: any): void => {
+    this.connection = initSocket(this, protocol, options)
+    this.jsonMessageParser = new JsonMessageParser((obj: any): void => {
       const type = util2.autoDetect(obj)
       switch (type) {
         case type2.JSON_TYPE.BATCH:
@@ -57,15 +57,15 @@ export class Client implements ISocketEvent {
       return Promise.resolve()
     }
     this.status = 1
-    return connectSocket(this.conn, this.port, this.host)
+    return connectSocket(this.connection, this.port, this.host)
   }
 
   close (): void {
     if (!this.status) {
       return
     }
-    this.conn.end()
-    this.conn.destroy()
+    this.connection.end()
+    this.connection.destroy()
     this.status = 0
   }
 
@@ -74,11 +74,11 @@ export class Client implements ISocketEvent {
       return Promise.reject(new Error('ESOCKET'))
     }
     return new Promise<T2>((resolve, reject) => {
-      const id: number = ++this.seq
+      const id: number = ++this.sequence
       const req: type2.IRequest<T1> = util2.makeRequest<T1>(id, method, params)
       const content: string = [JSON.stringify(req), '\n'].join('')
       this.callbackMessageTable[id] = createPromiseResult(resolve, reject)
-      this.conn.write(content)
+      this.connection.write(content)
     })
   }
 
@@ -130,9 +130,9 @@ export class Client implements ISocketEvent {
 
   onRecv (chunk: string): void {
     try {
-      this.jmp.run(chunk)
+      this.jsonMessageParser.run(chunk)
     } catch (e) {
-      this.conn.on('error', e)
+      this.connection.on('error', e)
     }
   }
 
