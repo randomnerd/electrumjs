@@ -1,32 +1,31 @@
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 # node-electrum-client
 
-Electrum Protocol Client for Node.js
-
-## what is this
-
-https://electrum.org/
-
-electrum is bitcoin wallet service.  
-This is a library of Node.js that can communicate with the electrum(x) server.  
-
-## install
+Electrum Protocol Client for NodeJS
 
 ```
 npm i electrum-client
 ```
 
-## spec
+## About Electrum
 
-* TCP / TLS
-* JSON-RPC
-* Subscribe Message
-* High Performance Message
+https://electrum.org/
 
-## protocol spec
+Electrum is widely used lightweight bitcoin wallet service. The project maintains a client and a server.
 
-* https://electrumx.readthedocs.io/en/latest/
+This library provides a simple interface for a connection with an [ElectrumX server](https://github.com/kyuupichan/electrumx/).
 
-## usage
+> [Check the Electrum protocol documentation](https://electrumx.readthedocs.io/en/latest/protocol.html)
+
+## Features
+
+* Implements JSON-RPC 2.0 over TCP / TLS
+* Supports subscriptions and notifications
+* High performance
+* Easy to use high level interface
+
+## Usage
 
 ```
 const electrumclient = require('electrum-client')
@@ -76,5 +75,3 @@ const main = async () => {
 }
 main().catch(console.log)
 ```
-
-
