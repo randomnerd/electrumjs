@@ -1,6 +1,6 @@
 import { Socket } from 'net'
 import { EventEmitter } from 'events'
-import { initSocket, connectSocket, ISocketEvent } from './socket_helper'
+import { initSocket, connectSocket, ISocketClient } from './socket_helper'
 import { JsonMessageParser } from './json_message_parser'
 import { type2, util2 } from 'jsonrpc-spec'
 
@@ -13,7 +13,7 @@ const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): a
   }
 }
 
-export class Client implements ISocketEvent {
+export class Client implements ISocketClient {
   private sequence: number
   private port: number
   private host: string
@@ -21,7 +21,7 @@ export class Client implements ISocketEvent {
   private connection: Socket
   private jsonMessageParser: JsonMessageParser
   private status: number
-  public subscribe: EventEmitter
+  public subscribe: EventEmitter // TODO: change to 'notifications' and fix rpcgen
 
   constructor (port: number, host: string, protocol: string = 'tcp', options: any = void 0) {
     this.sequence = 0

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { ISocketEvent } from './socket_helper'
+import { ISocketClient } from './socket_helper'
 import { JsonMessageParser } from './json_message_parser'
 import { type2, util2 } from 'jsonrpc-spec'
 
@@ -12,7 +12,7 @@ const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): a
   }
 }
 
-export class MockClient implements ISocketEvent {
+export class MockClient implements ISocketClient {
   private seq: number
   // private port: number
   // private host: string

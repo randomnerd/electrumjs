@@ -30,7 +30,7 @@ const getSocket = (protocol: string, options: any): Socket => {
   throw new Error('unknown protocol')
 }
 
-export interface ISocketEvent {
+export interface ISocketClient {
   onEnd: (e: Error) => void
   onError: (e: Error) => void
   onRecv: (chunk: string) => void
@@ -40,47 +40,57 @@ export interface ISocketEvent {
   request: (method: string, params: Array<any>) => Promise<any>
 }
 
-export const initSocket = (ev: ISocketEvent, protocol: string, options: any): Socket => {
-  const conn: Socket = getSocket(protocol, options)
-  conn.setTimeout(TIMEOUT)
-  conn.setEncoding('utf8')
-  conn.setKeepAlive(true, 0)
-  conn.setNoDelay(true)
-  conn.on('connect', () => {
-    conn.setTimeout(0)
-    ev.onConnect()
+// temporal workaround
+// TODO: fix rpcgen and remove this
+export interface ISocketEvent extends ISocketClient {}
+
+export const initSocket = (client: ISocketClient, protocol: string, options: any): Socket => {
+  // create connection
+  const connection: Socket = getSocket(protocol, options)
+
+  // set options
+  connection.setTimeout(TIMEOUT)
+  connection.setEncoding('utf8')
+  connection.setKeepAlive(true, 0)
+  connection.setNoDelay(true)
+
+  // setup event handlers
+  connection.on('connect', () => {
+    connection.setTimeout(0)
+    client.onConnect()
   })
-  conn.on('close', (e: Error) => {
-    ev.onClose(e)
+  connection.on('close', (e: Error) => {
+    client.onClose(e)
   })
-  conn.on('timeout', () => {
-    const e: TimeoutError = new TimeoutError('ETIMEDOUT')
-    e.errno = 'ETIMEDOUT'
-    e.code = 'ETIMEDOUT'
-    e.connect = false
-    conn.emit('error', e)
+  connection.on('timeout', () => {
+    const error: TimeoutError = new TimeoutError('ETIMEDOUT')
+    error.errno = 'ETIMEDOUT'
+    error.code = 'ETIMEDOUT'
+    error.connect = false
+    connection.emit('error', error)
   })
-  conn.on('data', (chunk: string) => {
-    conn.setTimeout(0)
-    ev.onRecv(chunk)
+  connection.on('data', (chunk: string) => {
+    connection.setTimeout(0)
+    client.onRecv(chunk)
   })
-  conn.on('end', (e) => {
-    conn.setTimeout(0)
-    ev.onEnd(e)
+  connection.on('end', (e) => {
+    connection.setTimeout(0)
+    client.onEnd(e)
   })
-  conn.on('error', (e) => {
-    ev.onError(e)
+  connection.on('error', (e) => {
+    client.onError(e)
   })
-  return conn
+
+  return connection
 }
 
-export const connectSocket = (conn: Socket, port: number, host: string): Promise<void> => {
+export const connectSocket = (connection: Socket, port: number, host: string): Promise<void> => {
   return new Promise((resolve: () => void, reject: (e: Error) => void) => {
     const errorHandler = (e: Error) => reject(e)
-    conn.connect(port, host, () => {
-      conn.removeListener('error', errorHandler)
+    connection.connect(port, host, () => {
+      connection.removeListener('error', errorHandler)
       resolve()
     })
-    conn.on('error', errorHandler)
+    connection.on('error', errorHandler)
   })
 }
