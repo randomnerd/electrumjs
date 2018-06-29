@@ -99,7 +99,7 @@ export class Client implements ISocketClient {
           break
       }
     } else {
-        // can't get async_callback
+        // TODO: handle unexpected messages
     }
   }
 

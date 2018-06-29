@@ -122,7 +122,7 @@ export class MockClient implements ISocketClient {
     this.subscribe.emit(message.method, message.params)
   }
   private onMessageBatchResponse (obj: Array<object>): void {
-      // don't support batch request
+      // TODO: support for batch responses
   }
 
   onConnect (): void {
@@ -141,7 +141,7 @@ export class MockClient implements ISocketClient {
     try {
       this.jsonMessageParser.run(chunk)
     } catch (e) {
-      //           this.conn.on('error', e)
+      // this.conn.on('error', e)
     }
   }
 
