@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketClient } from './socket_helper'
+import { ISocketClient } from '../lib/socket-utils'
 
 // ICoinBalance
 export interface ICoinBalance {
@@ -25,8 +25,8 @@ export interface IBlockHeader {
 
 export class ElectrumProtocol {
   static libname: string = 'javascript client'
-  static version: string = '0.9'
-  static hash: string = 'd73384a3f570b291a71162c4cfbce255d2e0bfaf1cdb56e4ddf6bd0fb75294d0'
+  static version: string = '1.0'
+  static hash: string = '3639bff641b745ea5ce7ae1e44dfbfe0ddb969772ce4b87e806689af0438f84d'
   client: ISocketClient
 
   constructor (client: ISocketClient) {
@@ -35,7 +35,7 @@ export class ElectrumProtocol {
   }
 
   // server_version
-  public server_version (client_version: string, protocol_version: string = '0.9'): Promise<string> {
+  public server_version (client_version: string, protocol_version: string = '1.0'): Promise<string> {
     return this.client.request('server.version', [ client_version, protocol_version ])
   }
 
@@ -109,19 +109,9 @@ export class ElectrumProtocol {
     return this.client.request('blockchain.address.listunspent', [ address ])
   }
 
-  // blockchain_utxo_getAddress
-  public blockchain_utxo_getAddress (tx_hash: string, index: string): Promise<object> {
-    return this.client.request('blockchain.utxo.get_address', [ tx_hash, index ])
-  }
-
   // blockchain_address_subscribe
   public blockchain_address_subscribe (address: string): Promise<string> {
     return this.client.request('blockchain.address.subscribe', [ address ])
-  }
-
-  // blockchain_numblocks_subscribe
-  public blockchain_numblocks_subscribe (): Promise<number> {
-    return this.client.request('blockchain.numblocks.subscribe', [])
   }
 
   // blockchain_headers_subscribe
@@ -132,7 +122,6 @@ export class ElectrumProtocol {
   onClose (): void {
     const list: Array<string> = []
     list.push('blockchain.address.subscribe')
-    list.push('blockchain.numblocks.subscribe')
     list.push('blockchain.headers.subscribe')
     list.forEach(event => this.client.subscribe.removeAllListeners(event))
   }

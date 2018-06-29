@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketClient } from './socket_helper'
+import { ISocketClient } from '../lib/socket-utils'
 
 {% for i in struct -%}
 {%- set ts = i.code(coder.typescript) -%}

@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketClient } from './socket_helper'
+import { ISocketClient } from '../lib/socket-utils'
 
 // ICoinBalance
 export interface ICoinBalance {
