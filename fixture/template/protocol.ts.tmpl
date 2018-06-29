@@ -30,7 +30,7 @@ export class {{ util.toUpperCamelCase(name, '-') }} {
 
   // {{ util.eitherOr(i.desc, ts.funcName) }}
   public {{ ts.funcName }} ({{ ts.funcParams.join(', ') | safe}}): Promise<{{ ts.funcReturn | safe}}> {
-    return this.client.request('{{ ts.requestName }}', [ {{ ts.params.join(', ') }} ])
+    return this.client.request('{{ ts.requestName }}', {{ util.printArray(ts.params) }})
   }
 {%- endif -%}
 {%- endfor %}
@@ -49,7 +49,7 @@ export class {{ util.toUpperCamelCase(name, '-') }} {
 export namespace validate {
 {%- for i in struct %}
 {%- set ts = i.code(coder.typescript) %}
-  export const {{ ts.structName }} = ( obj: object ): boolean => {
+  export const {{ ts.structName }} = (obj: object): boolean => {
     {% for j in i.storage -%}
     if (!('{{ j.name }}' in obj)) return false
     {% endfor -%}

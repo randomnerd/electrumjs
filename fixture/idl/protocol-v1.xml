@@ -27,7 +27,7 @@
 	<request name="server.banner" dir="client" result="string"/>
 	<request name="server.donation_address" dir="client" result="string"/>
 	<request name="server.features" dir="client" result="object"/>
-	<request name="server.peers.subscribe" dir="client" result="array<any>" desc="They don’t send notifications yet"/>
+	<request name="server.peers.subscribe" dir="client" result="array<any>" desc="Notifications are not yet supported"/>
 
 	<request name="blockchain.transaction.broadcast" dir="client" result="string">
 		<param name="rawtx" type="string" desc=""/>

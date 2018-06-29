@@ -30,15 +30,15 @@
 
 	<!-- rpc -->
 
-	<request name="server.version" dir="client" result="string" desc="A string identifying the server software.">
-		<param name="client_name" type="string" desc="A string identifying the connecting client software."/>
+	<request name="server.version" dir="client" result="string" desc="String identifying the server software.">
+		<param name="client_name" type="string" desc="String identifying the connecting client software."/>
 		<param name="protocol_version" type="string" default="'1.1'" desc=""/>
 	</request>
 
 	<request name="server.banner" dir="client" result="string"/>
 	<request name="server.donation_address" dir="client" result="string"/>
 	<request name="server.features" dir="client" result="object"/>
-	<request name="server.peers.subscribe" dir="client" result="array<any>" desc="They don’t send notifications yet"/>
+	<request name="server.peers.subscribe" dir="client" result="array<any>" desc="Notifications are not yet supported"/>
 
 	<request name="blockchain.transaction.broadcast" dir="client" result="string">
 		<param name="rawtx" type="string" desc=""/>
@@ -88,16 +88,16 @@
 	</notification>
 
 	<!-- new 1.1 -->
-	<request name="blockchain.scripthash.get_balance" dir="client" result="coin_balance" desc="Return the confirmed and unconfirmed balances of a script hash.">
+	<request name="blockchain.scripthash.get_balance" dir="client" result="coin_balance" desc="Confirmed and unconfirmed balances of a script hash.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
 	</request>
-	<request name="blockchain.scripthash.get_history" dir="client" result="array<object>" desc="Return the confirmed and unconfirmed history of a script hash.">
+	<request name="blockchain.scripthash.get_history" dir="client" result="array<object>" desc="Confirmed and unconfirmed history of a script hash.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
 	</request>
-	<request name="blockchain.scripthash.get_mempool" dir="client" result="array<tx_info_mempool>" desc="Return the unconfirmed transactions of a script hash.">
+	<request name="blockchain.scripthash.get_mempool" dir="client" result="array<tx_info_mempool>" desc="List of unconfirmed transactions of a script hash.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
 	</request>
-	<request name="blockchain.scripthash.listunspent" dir="client" result="array<tx_info_unspent>" desc="A list of unspent outputs in blockchain order. This function takes the mempool into account.">
+	<request name="blockchain.scripthash.listunspent" dir="client" result="array<tx_info_unspent>" desc="List of unspent outputs in blockchain order. This function takes the mempool into account.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
 	</request>
 	<request name="blockchain.scripthash.subscribe" dir="client" result="any" desc="">

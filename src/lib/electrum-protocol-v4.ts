@@ -57,22 +57,22 @@ export class ElectrumProtocol {
 
   // server_banner
   public server_banner (): Promise<string> {
-    return this.client.request('server.banner', [  ])
+    return this.client.request('server.banner', [])
   }
 
   // server_donationAddress
   public server_donationAddress (): Promise<string> {
-    return this.client.request('server.donation_address', [  ])
+    return this.client.request('server.donation_address', [])
   }
 
   // server_features
   public server_features (): Promise<object> {
-    return this.client.request('server.features', [  ])
+    return this.client.request('server.features', [])
   }
 
   // They don’t send notifications yet
   public server_peers_subscribe (): Promise<Array<Array<string>>> {
-    return this.client.request('server.peers.subscribe', [  ])
+    return this.client.request('server.peers.subscribe', [])
   }
 
   // blockchain_transaction_broadcast
@@ -142,12 +142,12 @@ export class ElectrumProtocol {
 
   // server_ping
   public server_ping (): Promise<void> {
-    return this.client.request('server.ping', [  ])
+    return this.client.request('server.ping', [])
   }
 
   // Return a histogram of the fee rates paid by transactions in the memory pool, weighted by transaction size. [fee, vsize] pairs
   public mempool_getFeeHistogram (): Promise<Array<[number, number]>> {
-    return this.client.request('mempool.get_fee_histogram', [  ])
+    return this.client.request('mempool.get_fee_histogram', [])
   }
 
   onClose (): void {
@@ -159,29 +159,29 @@ export class ElectrumProtocol {
 }
 
 export namespace validate {
-  export const ICoinBalance = ( obj: object ): boolean => {
+  export const ICoinBalance = (obj: object): boolean => {
     if (!('confirmed' in obj)) return false
     if (!('unconfirmed' in obj)) return false
     return true
   }
-  export const IBlockHeader = ( obj: object ): boolean => {
+  export const IBlockHeader = (obj: object): boolean => {
     if (!('height' in obj)) return false
     if (!('hex' in obj)) return false
     return true
   }
-  export const ITxMerkle = ( obj: object ): boolean => {
+  export const ITxMerkle = (obj: object): boolean => {
     if (!('merkle' in obj)) return false
     if (!('block_height' in obj)) return false
     if (!('pos' in obj)) return false
     return true
   }
-  export const ITxInfoMempool = ( obj: object ): boolean => {
+  export const ITxInfoMempool = (obj: object): boolean => {
     if (!('tx_hash' in obj)) return false
     if (!('height' in obj)) return false
     if (!('fee' in obj)) return false
     return true
   }
-  export const ITxInfoUnspent = ( obj: object ): boolean => {
+  export const ITxInfoUnspent = (obj: object): boolean => {
     if (!('tx_pos' in obj)) return false
     if (!('value' in obj)) return false
     if (!('tx_hash' in obj)) return false

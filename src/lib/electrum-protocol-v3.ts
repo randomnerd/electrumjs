@@ -41,7 +41,7 @@ export interface ITxInfoUnspent {
 export class ElectrumProtocol {
   static libname: string = 'javascript client'
   static version: string = '1.1'
-  static hash: string = '490521be6a5183a0b120979c099ac4e0ba77f53dfde0bb1d6828bc5f0a9faa29'
+  static hash: string = 'ec46b1a3de2ce38cac86cdd6a56d91a7d4aaf8942f7180e08684021619a2f31c'
   client: ISocketEvent
 
   constructor (client: ISocketEvent) {
@@ -49,29 +49,29 @@ export class ElectrumProtocol {
     this.client.subscribe.on('close', () => { this.onClose() })
   }
 
-  // A string identifying the server software.
+  // String identifying the server software.
   public server_version (client_name: string, protocol_version: string = '1.1'): Promise<string> {
     return this.client.request('server.version', [ client_name, protocol_version ])
   }
 
   // server_banner
   public server_banner (): Promise<string> {
-    return this.client.request('server.banner', [  ])
+    return this.client.request('server.banner', [])
   }
 
   // server_donationAddress
   public server_donationAddress (): Promise<string> {
-    return this.client.request('server.donation_address', [  ])
+    return this.client.request('server.donation_address', [])
   }
 
   // server_features
   public server_features (): Promise<object> {
-    return this.client.request('server.features', [  ])
+    return this.client.request('server.features', [])
   }
 
-  // They don’t send notifications yet
+  // Notifications are not yet supported
   public server_peers_subscribe (): Promise<Array<object>> {
-    return this.client.request('server.peers.subscribe', [  ])
+    return this.client.request('server.peers.subscribe', [])
   }
 
   // blockchain_transaction_broadcast
@@ -131,25 +131,25 @@ export class ElectrumProtocol {
 
   // blockchain_headers_subscribe
   public blockchain_headers_subscribe (): Promise<IBlockHeader> {
-    return this.client.request('blockchain.headers.subscribe', [  ])
+    return this.client.request('blockchain.headers.subscribe', [])
   }
 
-  // Return the confirmed and unconfirmed balances of a script hash.
+  // Confirmed and unconfirmed balances of a script hash.
   public blockchain_scripthash_getBalance (scripthash: string): Promise<ICoinBalance> {
     return this.client.request('blockchain.scripthash.get_balance', [ scripthash ])
   }
 
-  // Return the confirmed and unconfirmed history of a script hash.
+  // Confirmed and unconfirmed history of a script hash.
   public blockchain_scripthash_getHistory (scripthash: string): Promise<Array<object>> {
     return this.client.request('blockchain.scripthash.get_history', [ scripthash ])
   }
 
-  // Return the unconfirmed transactions of a script hash.
+  // List of unconfirmed transactions of a script hash.
   public blockchain_scripthash_getMempool (scripthash: string): Promise<Array<ITxInfoMempool>> {
     return this.client.request('blockchain.scripthash.get_mempool', [ scripthash ])
   }
 
-  // A list of unspent outputs in blockchain order. This function takes the mempool into account.
+  // List of unspent outputs in blockchain order. This function takes the mempool into account.
   public blockchain_scripthash_listunspent (scripthash: string): Promise<Array<ITxInfoUnspent>> {
     return this.client.request('blockchain.scripthash.listunspent', [ scripthash ])
   }
@@ -174,12 +174,12 @@ export class ElectrumProtocol {
 }
 
 export namespace validate {
-  export const ICoinBalance = ( obj: object ): boolean => {
+  export const ICoinBalance = (obj: object): boolean => {
     if (!('confirmed' in obj)) return false
     if (!('unconfirmed' in obj)) return false
     return true
   }
-  export const IBlockHeader = ( obj: object ): boolean => {
+  export const IBlockHeader = (obj: object): boolean => {
     if (!('nonce' in obj)) return false
     if (!('prev_block_hash' in obj)) return false
     if (!('timestamp' in obj)) return false
@@ -190,13 +190,13 @@ export namespace validate {
     if (!('bits' in obj)) return false
     return true
   }
-  export const ITxInfoMempool = ( obj: object ): boolean => {
+  export const ITxInfoMempool = (obj: object): boolean => {
     if (!('tx_hash' in obj)) return false
     if (!('height' in obj)) return false
     if (!('fee' in obj)) return false
     return true
   }
-  export const ITxInfoUnspent = ( obj: object ): boolean => {
+  export const ITxInfoUnspent = (obj: object): boolean => {
     if (!('tx_pos' in obj)) return false
     if (!('value' in obj)) return false
     if (!('tx_hash' in obj)) return false

@@ -26,7 +26,7 @@ export interface IBlockHeader {
 export class ElectrumProtocol {
   static libname: string = 'javascript client'
   static version: string = '1.0'
-  static hash: string = '2e2cdaf4905e8d83e34693d228f6eef5335067021268fe561e6eaf94c33f6cc0'
+  static hash: string = '3639bff641b745ea5ce7ae1e44dfbfe0ddb969772ce4b87e806689af0438f84d'
   client: ISocketEvent
 
   constructor (client: ISocketEvent) {
@@ -41,22 +41,22 @@ export class ElectrumProtocol {
 
   // server_banner
   public server_banner (): Promise<string> {
-    return this.client.request('server.banner', [  ])
+    return this.client.request('server.banner', [])
   }
 
   // server_donationAddress
   public server_donationAddress (): Promise<string> {
-    return this.client.request('server.donation_address', [  ])
+    return this.client.request('server.donation_address', [])
   }
 
   // server_features
   public server_features (): Promise<object> {
-    return this.client.request('server.features', [  ])
+    return this.client.request('server.features', [])
   }
 
-  // They don’t send notifications yet
+  // Notifications are not yet supported
   public server_peers_subscribe (): Promise<Array<object>> {
-    return this.client.request('server.peers.subscribe', [  ])
+    return this.client.request('server.peers.subscribe', [])
   }
 
   // blockchain_transaction_broadcast
@@ -116,7 +116,7 @@ export class ElectrumProtocol {
 
   // blockchain_headers_subscribe
   public blockchain_headers_subscribe (): Promise<IBlockHeader> {
-    return this.client.request('blockchain.headers.subscribe', [  ])
+    return this.client.request('blockchain.headers.subscribe', [])
   }
 
   onClose (): void {
@@ -128,12 +128,12 @@ export class ElectrumProtocol {
 }
 
 export namespace validate {
-  export const ICoinBalance = ( obj: object ): boolean => {
+  export const ICoinBalance = (obj: object): boolean => {
     if (!('confirmed' in obj)) return false
     if (!('unconfirmed' in obj)) return false
     return true
   }
-  export const IBlockHeader = ( obj: object ): boolean => {
+  export const IBlockHeader = (obj: object): boolean => {
     if (!('nonce' in obj)) return false
     if (!('prev_block_hash' in obj)) return false
     if (!('timestamp' in obj)) return false
