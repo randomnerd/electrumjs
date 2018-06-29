@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketEvent } from './socket_helper'
+import { ISocketClient } from './socket_helper'
 
 {% for i in struct -%}
 {%- set ts = i.code(coder.typescript) -%}
@@ -18,9 +18,9 @@ export class {{ util.toUpperCamelCase(name, '-') }} {
   static libname: string = 'javascript client'
   static version: string = '{{ version }}'
   static hash: string = '{{ document.hash }}'
-  client: ISocketEvent
+  client: ISocketClient
 
-  constructor (client: ISocketEvent) {
+  constructor (client: ISocketClient) {
     this.client = client
     this.client.subscribe.on('close', () => { this.onClose() })
   }

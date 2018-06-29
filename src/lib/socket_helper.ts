@@ -40,10 +40,6 @@ export interface ISocketClient {
   request: (method: string, params: Array<any>) => Promise<any>
 }
 
-// temporal workaround
-// TODO: fix rpcgen and remove this
-export interface ISocketEvent extends ISocketClient {}
-
 export const initSocket = (client: ISocketClient, protocol: string, options: any): Socket => {
   // create connection
   const connection: Socket = getSocket(protocol, options)

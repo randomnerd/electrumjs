@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketEvent } from './socket_helper'
+import { ISocketClient } from './socket_helper'
 
 // ICoinBalance
 export interface ICoinBalance {
@@ -27,9 +27,9 @@ export class ElectrumProtocol {
   static libname: string = 'javascript client'
   static version: string = '1.0'
   static hash: string = '3639bff641b745ea5ce7ae1e44dfbfe0ddb969772ce4b87e806689af0438f84d'
-  client: ISocketEvent
+  client: ISocketClient
 
-  constructor (client: ISocketEvent) {
+  constructor (client: ISocketClient) {
     this.client = client
     this.client.subscribe.on('close', () => { this.onClose() })
   }

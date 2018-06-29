@@ -3,7 +3,7 @@
 
 /* tslint:disable variable-name */
 
-import { ISocketEvent } from './socket_helper'
+import { ISocketClient } from './socket_helper'
 
 // result of blockchain.scripthash.get_balance
 export interface ICoinBalance {
@@ -43,9 +43,9 @@ export class ElectrumProtocol {
   static libname: string = 'javascript client'
   static version: string = '1.2'
   static hash: string = '5432d85e8dd52e9091b1d25a30f119c1e4ecd1dc9e76a2539c2a71c56b14350f'
-  client: ISocketEvent
+  client: ISocketClient
 
-  constructor (client: ISocketEvent) {
+  constructor (client: ISocketClient) {
     this.client = client
     this.client.subscribe.on('close', () => { this.onClose() })
   }
