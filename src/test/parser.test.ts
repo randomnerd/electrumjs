@@ -128,7 +128,7 @@ describe('parser success', () => {
 describe('parser error', () => {
   it('error zero depth', () => {
     try {
-      const f = createRecursiveParser('\n', 0)
+      createRecursiveParser('\n', 0)
     } catch (e) {
       return
     }
