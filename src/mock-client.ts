@@ -19,7 +19,7 @@ export class MockClient implements ISocketClient {
   private callbackMessageTable: { [key: string]: asyncCallback }
   private jsonMessageParser: JsonMessageParser
   private status: number
-  public subscribe: EventEmitter
+  public notifications: EventEmitter
   private connection: boolean
 
   constructor () {
@@ -27,7 +27,7 @@ export class MockClient implements ISocketClient {
     // this.port = 3333
     // this.host = 'test.example.com'
     this.callbackMessageTable = {}
-    this.subscribe = new EventEmitter()
+    this.notifications = new EventEmitter()
     this.connection = false
     this.jsonMessageParser = new JsonMessageParser((obj: any): void => {
       const type = util2.autoDetect(obj)
@@ -119,7 +119,7 @@ export class MockClient implements ISocketClient {
 
   private onMessageNotification (obj: any): void {
     const message = util2.resolveNotification<any>(obj)
-    this.subscribe.emit(message.method, message.params)
+    this.notifications.emit(message.method, message.params)
   }
   private onMessageBatchResponse (obj: Array<object>): void {
       // TODO: support for batch responses

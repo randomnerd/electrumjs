@@ -22,7 +22,7 @@ export class {{ util.toUpperCamelCase(name, '-') }} {
 
   constructor (client: ISocketClient) {
     this.client = client
-    this.client.subscribe.on('close', () => { this.onClose() })
+    this.client.notifications.on('close', () => { this.onClose() })
   }
 {%- for i in request -%}
 {%- if i.dir === 0 -%}
@@ -42,7 +42,7 @@ export class {{ util.toUpperCamelCase(name, '-') }} {
     list.push('{{ i.name }}')
 {%- endif -%}
 {%- endfor %}
-    list.forEach(event => this.client.subscribe.removeAllListeners(event))
+    list.forEach(event => this.client.notifications.removeAllListeners(event))
   }
 }
 

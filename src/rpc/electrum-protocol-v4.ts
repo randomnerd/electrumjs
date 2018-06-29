@@ -47,7 +47,7 @@ export class ElectrumProtocol {
 
   constructor (client: ISocketClient) {
     this.client = client
-    this.client.subscribe.on('close', () => { this.onClose() })
+    this.client.notifications.on('close', () => { this.onClose() })
   }
 
   // Identify the client to the server and negotiate the protocol version.
@@ -154,7 +154,7 @@ export class ElectrumProtocol {
     const list: Array<string> = []
     list.push('blockchain.headers.subscribe')
     list.push('blockchain.scripthash.subscribe')
-    list.forEach(event => this.client.subscribe.removeAllListeners(event))
+    list.forEach(event => this.client.notifications.removeAllListeners(event))
   }
 }
 

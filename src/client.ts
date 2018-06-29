@@ -21,14 +21,14 @@ export class Client implements ISocketClient {
   private connection: Socket
   private jsonMessageParser: JsonMessageParser
   private status: number
-  public subscribe: EventEmitter // TODO: change to 'notifications' and fix rpcgen
+  public notifications: EventEmitter
 
   constructor (port: number, host: string, protocol: string = 'tcp', options: any = void 0) {
     this.sequence = 0
     this.port = port
     this.host = host
     this.callbackMessageTable = {}
-    this.subscribe = new EventEmitter()
+    this.notifications = new EventEmitter()
     this.connection = initSocket(this, protocol, options)
     this.jsonMessageParser = new JsonMessageParser((obj: any): void => {
       const type = util2.autoDetect(obj)
@@ -109,7 +109,7 @@ export class Client implements ISocketClient {
 
   private onMessageNotification (obj: any): void {
     const message = util2.resolveNotification<any>(obj)
-    this.subscribe.emit(message.method, message.params)
+    this.notifications.emit(message.method, message.params)
   }
   private onMessageBatchResponse (obj: Array<object>): void {
     // TODO: support for batch responses

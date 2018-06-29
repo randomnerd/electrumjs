@@ -36,7 +36,7 @@ export interface ISocketClient {
   onRecv: (chunk: string) => void
   onConnect: () => void
   onClose: (e: Error) => void
-  subscribe: EventEmitter
+  notifications: EventEmitter
   request: (method: string, params: Array<any>) => Promise<any>
 }
 
