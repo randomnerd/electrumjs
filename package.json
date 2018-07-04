@@ -2,8 +2,8 @@
   "name": "electrum-client",
   "version": "0.1.0",
   "description": "Electrum protocol client for node.js",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "files": [
     "dist",
     "src",

@@ -25,6 +25,13 @@ This library provides a simple interface for a connection with an [ElectrumX ser
 * High performance
 * Easy to use high level interface
 
+## To do
+
+[ ] Batch requests
+[ ] Websocket support
+[ ] Complete set of unit and integration tests
+[ ] Split into a JSON-RPC Web/Socket module and the electrumx client module
+
 ## Usage
 
 ```

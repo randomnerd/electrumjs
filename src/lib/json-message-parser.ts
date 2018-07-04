@@ -2,12 +2,17 @@ import { IParseContext, PARSE_STATUS, chunkHandler, createRecursiveParser, parse
 
 const lineParser: parser = createRecursiveParser('\n', 20)
 
-export class JsonMessageParser {
-  private chunkBuffer: string
-  private callback: chunkHandler
+export interface IJsonMessageParser {
+  run: (chunk: string) => void
+}
+
+export class JsonMessageParser implements IJsonMessageParser {
+  private _chunkBuffer: string
+  private _callback: chunkHandler
+
   constructor (messageCallback: (obj: Object) => void) {
-    this.chunkBuffer = ''
-    this.callback = (data: string, depth: number): boolean => {
+    this._chunkBuffer = ''
+    this._callback = (data: string, depth: number): boolean => {
       try {
         messageCallback(JSON.parse(data))
       } catch (e) {
@@ -17,12 +22,12 @@ export class JsonMessageParser {
     }
   }
 
-  run (chunk: string): void {
-    let chunkBuffer = this.chunkBuffer + chunk
+  public run (chunk: string): void {
+    let chunkBuffer = this._chunkBuffer + chunk
     while (true) {
-      const result: IParseContext = lineParser(chunkBuffer, this.callback)
+      const result: IParseContext = lineParser(chunkBuffer, this._callback)
       if (result.code === PARSE_STATUS.DONE) {
-        this.chunkBuffer = result.chunk
+        this._chunkBuffer = result.chunk
         break
       } else if (result.code === PARSE_STATUS.ABEND) {
         throw new Error('JSON error: ' + result.chunk)

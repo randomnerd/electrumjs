@@ -1,64 +1,80 @@
 import { EventEmitter } from 'events'
-import { ISocketClient } from './lib/socket-utils'
+import { ISocketClient } from './client'
 import { JsonMessageParser } from './lib/json-message-parser'
 import { type2, util2 } from 'jsonrpc-spec'
 
-type asyncCallback = (e: null | Error, message?: any) => void
+// ----------------
+// type
 
-const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): asyncCallback => {
+type IAsyncCallback = (e: null | Error, message?: any) => void
+
+// ----------------
+// helpers
+
+const createPromiseResult = (resolve: (arg) => void, reject: (Error) => void): IAsyncCallback => {
   return (err, result) => {
     if (err) reject(err)
     else resolve(result)
   }
 }
 
+// ----------------
+// mock client
+
+/** Mock (fake) socket client */
 export class MockClient implements ISocketClient {
-  private sequence: number
-  // private port: number
-  // private host: string
-  private callbackMessageTable: { [key: string]: asyncCallback }
-  private jsonMessageParser: JsonMessageParser
-  private status: number
+  private _sequence: number
+  private _callbackMessageTable: { [key: string]: IAsyncCallback }
+  private _connection: boolean
+  private _jsonMessageParser: JsonMessageParser
+  private _status: number
   public notifications: EventEmitter
-  private connection: boolean
 
   constructor () {
-    this.sequence = 0
-    // this.port = 3333
-    // this.host = 'test.example.com'
-    this.callbackMessageTable = {}
+    this._sequence = 0
+    this._callbackMessageTable = {}
+    this._connection = false
+    this._jsonMessageParser = this._getJsonMessageParser()
+    this._status = 0
     this.notifications = new EventEmitter()
-    this.connection = false
-    this.jsonMessageParser = new JsonMessageParser((obj: any): void => {
+  }
+
+  // ----------------
+  // JSON message parser
+
+  _getJsonMessageParser () {
+    return new JsonMessageParser((obj: any): void => {
       const type = util2.autoDetect(obj)
       switch (type) {
         case type2.JSON_TYPE.BATCH:
-          this.onMessageBatchResponse(obj as Array<object>)
+          this._onMessageBatchResponse(obj as Array<object>)
           break
         case type2.JSON_TYPE.RESPONSE:
-          this.onMessageResponse(type2.JSON_TYPE.RESPONSE, obj as type2.IBaseResponse)
+          this._onMessageResponse(type2.JSON_TYPE.RESPONSE, obj as type2.IBaseResponse)
           break
         case type2.JSON_TYPE.RESPONSE_ERROR:
-          this.onMessageResponse(type2.JSON_TYPE.RESPONSE_ERROR, obj as type2.IBaseResponse)
+          this._onMessageResponse(type2.JSON_TYPE.RESPONSE_ERROR, obj as type2.IBaseResponse)
           break
         case type2.JSON_TYPE.NOTIFICATION:
-          this.onMessageNotification(obj)
+          this._onMessageNotification(obj)
           break
         default:
           break
       }
     })
-    this.status = 0
   }
 
+  // ----------------
+  // lifecycle methods
+
   connect (): Promise<void> {
-    if (this.status) {
+    if (this._status) {
       return Promise.resolve()
     }
-    this.status = 1
-    this.connection = true
+    this._status = 1
+    this._connection = true
     const loop = () => {
-      if (this.connection) {
+      if (this._connection) {
         setTimeout(() => loop(), 1000)
       }
     }
@@ -67,37 +83,23 @@ export class MockClient implements ISocketClient {
   }
 
   close (): void {
-    if (!this.status) {
+    if (!this._status) {
       return
     }
-    this.status = 0
-    this.connection = false
+    this._status = 0
+    this._connection = false
   }
 
-  injectResponse (msg: string): void {
-    this.onRecv(msg)
-  }
+  // ----------------
+  // request and response
 
-  request<T1, T2> (method: string, params: T1): Promise<T2> {
-    if (!this.status) {
-      return Promise.reject(new Error('ESOCKET'))
-    }
-    return new Promise<T2>((resolve, reject) => {
-      const id: number = ++this.sequence
-      // const req: type2.IRequest<T1> = util2.makeRequest<T1>(id, method, params)
-      // const content: string = [JSON.stringify(req), '\n'].join('')
-      this.callbackMessageTable[id] = createPromiseResult(resolve, reject)
-      //            this.conn.write(content)
-    })
-  }
-
-  response (type: type2.JSON_TYPE, obj: type2.IBaseResponse): void {
+  private _responseHandler (type: type2.JSON_TYPE, obj: type2.IBaseResponse): void {
     if (obj.id === null) {
       return
     }
-    const cb: asyncCallback = this.callbackMessageTable[obj.id]
+    const cb: IAsyncCallback = this._callbackMessageTable[obj.id]
     if (cb) {
-      delete this.callbackMessageTable[obj.id]
+      delete this._callbackMessageTable[obj.id]
       switch (type) {
         case type2.JSON_TYPE.RESPONSE:
           const r: type2.IResponse<any> = util2.resolveResponse<any>(obj)
@@ -113,43 +115,70 @@ export class MockClient implements ISocketClient {
     }
   }
 
-  private onMessageResponse (type: type2.JSON_TYPE, obj: type2.IBaseResponse): void {
-    this.response(type, obj)
-  }
-
-  private onMessageNotification (obj: any): void {
-    const message = util2.resolveNotification<any>(obj)
-    this.notifications.emit(message.method, message.params)
-  }
-  private onMessageBatchResponse (obj: Array<object>): void {
-      // TODO: support for batch responses
-  }
-
-  onConnect (): void {
-    console.log('connected')
-  }
-
-  onClose (): void {
-    Object.keys(this.callbackMessageTable).forEach((key) => {
-      const cb: asyncCallback = this.callbackMessageTable[key]
-      cb(new Error('close connect'))
-      delete this.callbackMessageTable[key]
+  request<T1, T2> (method: string, params: T1): Promise<T2> {
+    if (!this._status) {
+      return Promise.reject(new Error('ESOCKET'))
+    }
+    return new Promise<T2>((resolve, reject) => {
+      const id: number = ++this._sequence
+      // const req: type2.IRequest<T1> = util2.makeRequest<T1>(id, method, params)
+      // const content: string = [JSON.stringify(req), '\n'].join('')
+      this._callbackMessageTable[id] = createPromiseResult(resolve, reject)
+      //            this.conn.write(content)
     })
   }
 
-  onRecv (chunk: string): void {
+  // ----------------
+  // message events
+
+  private _onMessageResponse (type: type2.JSON_TYPE, obj: type2.IBaseResponse): void {
+    this._responseHandler(type, obj)
+  }
+
+  private _onMessageNotification (obj: any): void {
+    const message = util2.resolveNotification<any>(obj)
+    this.notifications.emit(message.method, message.params)
+  }
+
+  private _onMessageBatchResponse (obj: Array<object>): void {
+      // TODO: support for batch responses
+  }
+
+  // ----------------
+  // socket event handlers
+
+  _onConnect (): void {
+    // TODO
+  }
+
+  _onClose (): void {
+    Object.keys(this._callbackMessageTable).forEach((key) => {
+      const cb: IAsyncCallback = this._callbackMessageTable[key]
+      cb(new Error('close connect'))
+      delete this._callbackMessageTable[key]
+    })
+  }
+
+  _onRecv (chunk: string): void {
     try {
-      this.jsonMessageParser.run(chunk)
+      this._jsonMessageParser.run(chunk)
     } catch (e) {
-      // this.conn.on('error', e)
+      // TODO: this.conn.on('error', e)
     }
   }
 
-  onEnd (e: Error): void {
-    console.log('connected')
+  _onEnd (e: Error): void {
+    // TODO
   }
 
-  onError (e: Error): void {
+  _onError (e: Error): void {
     this.close()
+  }
+
+  // ----------------
+  // TODO: find out what this one does
+
+  injectResponse (msg: string): void {
+    this._onRecv(msg)
   }
 }
