@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import { createRecursiveParser, PARSE_STATUS } from '../lib/parser'
+import { createRecursiveParser, PARSE_STATUS } from '../json-rpc-socket/lib/parser'
 
 // type callback = (Error?) => void
 

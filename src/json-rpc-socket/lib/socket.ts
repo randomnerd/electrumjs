@@ -1,6 +1,6 @@
 import { Socket } from 'net'
 import { TLSSocket } from 'tls'
-import { ISocketClient } from '../client'
+import { IJSONRPCSocketClient } from '../client'
 
 // ----------------
 // constants
@@ -47,7 +47,7 @@ const getSocket = (protocol: string, options: any): Socket => {
  * @param protocol Socket protocol (tcp or tls)
  * @param options Socket client options
  */
-export const initSocketClient = (client: ISocketClient, protocol: string, options: any): Socket => {
+export const initSocketClient = (client: IJSONRPCSocketClient, protocol: string, options: any): Socket => {
   const conn: Socket = getSocket(protocol, options) // create connection
 
   // set options

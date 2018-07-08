@@ -44,13 +44,9 @@
     "typescript": "^2.8.0"
   },
   "scripts": {
-    "build-rpc1": "rpcgen -i fixture/idl/protocol-v1.xml -t fixture/template/protocol.ts.tmpl > src/rpc/electrum-protocol-v1.ts",
-    "build-rpc2": "rpcgen -i fixture/idl/protocol-v2.xml -t fixture/template/protocol.ts.tmpl > src/rpc/electrum-protocol-v2.ts",
-    "build-rpc3": "rpcgen -i fixture/idl/protocol-v3.xml -t fixture/template/protocol.ts.tmpl > src/rpc/electrum-protocol-v3.ts",
-    "build-rpc4": "rpcgen -i fixture/idl/protocol-v4.xml -t fixture/template/protocol.ts.tmpl > src/rpc/electrum-protocol-v4.ts",
-    "build-rpc": "rm -f src/lib/electrum-protocol-v* && npm run build-rpc1 -s && npm run build-rpc2 -s && npm run build-rpc3 -s && npm run build-rpc4 -s",
+    "build-protocol": "rm -f src/protocol.ts && rpcgen -i protocol/definition.xml -t protocol/template.ts.tmpl > src/gen/protocol.ts",
     "build-tsc": "rm -rf dist && tsc -p ./",
-    "build": "npm run build-rpc -s && npm run build-tsc -s",
+    "build": "npm run build-protocol -s && npm run build-tsc -s",
     "lint": "tslint --project .",
     "test": "nyc mocha ./dist/test",
     "test-watch": "mocha --watch ./dist/test",
