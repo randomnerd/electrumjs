@@ -1,12 +1,15 @@
 const electrumclient = require('..')
 const Client = electrumclient.Client
-const ElectrumProtocol = electrumclient.v4.ElectrumProtocol
+const ElectrumProtocol = electrumclient.v3.ElectrumProtocol
 
 const proc = async (ecl) => {
+  const balance = await ecl.blockchain_address_getBalance('12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX')
+  console.log(balance)
+  const unspent = await ecl.blockchain_address_listunspent('12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX')
+  console.log(unspent)
+
   const tx1 = await ecl.blockchain_transaction_get('f91d0a8a78462bc59398f2c5d7a84fcff491c26ba54c4833478b202796c8aafd')
   console.log(tx1)
-  const tx2 = await ecl.blockchain_transaction_getParsed('f91d0a8a78462bc59398f2c5d7a84fcff491c26ba54c4833478b202796c8aafd')
-  console.log(JSON.stringify(tx2, null, 2))
 }
 
 const main = async () => {

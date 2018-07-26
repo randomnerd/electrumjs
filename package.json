@@ -1,30 +1,78 @@
 {
   "name": "electrum-client",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Electrum protocol client for node.js",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "electrum-host-parse": "*"
-  },
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "example",
+    "package.json",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/you21979/node-electrum-client.git"
+    "url": "git+https://github.com/you21979/node-electrum-client..git"
   },
-  "bugs": {
-    "url": "https://github.com/you21979/node-electrum-client/issues"
+  "engines": {
+    "node": ">=6"
   },
   "keywords": [
     "client",
     "electrum",
     "bitcoin"
   ],
-  "engines": {
-    "node": ">=6"
+  "dependencies": {
+    "jsonrpc-spec": "0.0.3"
   },
+  "devDependencies": {
+    "@types/mocha": "^5.0.0",
+    "@types/node": "^10.5.1",
+    "coveralls": "^3.0.0",
+    "docco": "^0.8.0",
+    "electrum-host-parse": "*",
+    "mocha": "^5.0.5",
+    "npm-check": "^5.7.1",
+    "nsp": "^3.2.1",
+    "nyc": "^12.0.2",
+    "pre-commit": "^1.2.2",
+    "rpcgen": "github:DaniGuardiola/rpcgen",
+    "standard": "^11.0.1",
+    "tslint": "^5.10.0",
+    "tslint-config-standard": "^7.1.0",
+    "typescript": "^2.8.0"
+  },
+  "scripts": {
+    "build-protocol": "rm -f src/protocol.ts && rpcgen -i protocol/definition.xml -t protocol/template.ts.tmpl > src/gen/protocol.ts",
+    "build-tsc": "rm -rf dist && tsc -p ./",
+    "build": "npm run build-protocol -s && npm run build-tsc -s",
+    "lint": "tslint --project .",
+    "test": "nyc mocha ./dist/test",
+    "test-watch": "mocha --watch ./dist/test",
+    "coverage": "nyc check-coverage --branches 90 --functions 90",
+    "coverage-html": "nyc report --reporter html --report-dir coverage-html",
+    "coveralls": "npm test -s && nyc report --reporter=text-lcov | coveralls",
+    "check-security": "nsp check",
+    "check-deps": "npm-check -p",
+    "checklist": "npm run build -s -s && npm run lint && npm test -s && npm run coverage -s && npm run check-security -s && npm run check-deps -s",
+    "docs": "rm -rf docs && docco --output docs src/*.ts src/**/*.ts",
+    "cleanup": "rm -rf docs dist .nyc_output coverage coverage-html node_modules"
+  },
+  "pre-commit": [
+    "build",
+    "lint",
+    "test",
+    "coverage",
+    "check-security",
+    "check-deps",
+    "coverage-html",
+    "docs"
+  ],
   "author": "Yuki Akiyama",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/you21979/node-electrum-client./issues"
+  },
+  "homepage": "https://github.com/you21979/node-electrum-client.#readme"
 }

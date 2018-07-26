@@ -1,49 +1,84 @@
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 # node-electrum-client
 
-Electrum Protocol Client for Node.js
-
-## what is this
-
-https://electrum.org/
-
-electrum is bitcoin wallet service.  
-This is a library of Node.js that can communicate with the electrum(x) server.  
-
-## install
+Electrum Protocol Client for NodeJS
 
 ```
 npm i electrum-client
 ```
 
-## spec
+## About Electrum
 
-* TCP / TLS
-* JSON-RPC
-* Subscribe Message
-* High Performance Message
-* no dependency for other library
+https://electrum.org/
 
-## protocol spec
+Electrum is widely used lightweight bitcoin wallet service. The project maintains a client and a server.
 
-* https://electrumx.readthedocs.io/en/latest/PROTOCOL.html
+This library provides a simple interface for a connection with an [ElectrumX server](https://github.com/kyuupichan/electrumx/).
 
-## usage
+> [Check the Electrum protocol documentation](https://electrumx.readthedocs.io/en/latest/protocol.html)
+
+## Features
+
+* Implements JSON-RPC 2.0 over TCP / TLS
+* Supports subscriptions and notifications
+* High performance
+* Easy to use high level interface
+
+## To do
+
+[ ] Batch requests
+[ ] Websocket support
+[ ] Complete set of unit and integration tests
+[ ] Split into a JSON-RPC Web/Socket module and the electrumx client module
+
+## Usage
 
 ```
-const ElectrumCli = require('electrum-client')
+const electrumclient = require('electrum-client')
+const Client = electrumclient.Client
+
+// version control interface
+const ElectrumProtocol = electrumclient.v1.ElectrumProtocol
+
+const proc = async (ecl) => {
+    const balance = await ecl.blockchain_address_getBalance("12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX")
+    console.log(balance)
+    const unspent = await ecl.blockchain_address_listunspent("12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX")
+    console.log(unspent)
+
+    const tx1 = await ecl.blockchain_transaction_get("f91d0a8a78462bc59398f2c5d7a84fcff491c26ba54c4833478b202796c8aafd")
+    console.log(tx1)
+}
+
 const main = async () => {
-    const ecl = new ElectrumCli(995, 'btc.smsys.me', 'tls') // tcp or tls
-    await ecl.connect() // connect(promise)
-    ecl.subscribe.on('blockchain.headers.subscribe', (v) => console.log(v)) // subscribe message(EventEmitter)
+    // autogenerate client name
+    const myname = [ElectrumProtocol.libname, ElectrumProtocol.hash].join('-')
+    console.log(myname)
+
+    // initialize
+    const ecl = new ElectrumProtocol(new Client(995, 'btc.smsys.me', 'tls'))
+
+    // wait a connection
+    await ecl.client.connect()
+
     try{
-        const ver = await ecl.server_version("2.7.11", "1.0") // json-rpc(promise)
-        console.log(ver)
+        // negotiation protocol
+        const res = await ecl.server_version(myname)
+        console.log(res)
+    }catch(e){
+        // negotiation error
+        await ecl.client.close()
+        console.log(e)
+        return;
+    }
+
+    try{
+        await proc(ecl)
     }catch(e){
         console.log(e)
     }
-    await ecl.close() // disconnect(promise)
+    await ecl.client.close()
 }
-main()
+main().catch(console.log)
 ```
-
-
