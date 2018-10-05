@@ -1,12 +1,19 @@
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+[![TypeScript](https://badges.frapsoft.com/typescript/love/typescript-200x44.png?v=101)](https://github.com/ellerbrock/typescript-badges/)
+
+![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
 
 # electrumjs
 
 Electrum Protocol Client for NodeJS
 
 ```
-npm i electrum-client
+npm i electrumjs
 ```
+
+## IMPORTANT
+
+Note that this is a work in progress and it is not ready for production whatsoever. The package has not even been published to NPM yet. Proceed at your own risk.
 
 ## About Electrum
 
@@ -27,10 +34,10 @@ This library provides a simple interface for a connection with an [ElectrumX ser
 
 ## To do
 
-[ ] Batch requests
-[ ] Websocket support
-[ ] Complete set of unit and integration tests
-[ ] Split into a JSON-RPC Web/Socket module and the electrumx client module
+- [ ] Batch requests
+- [ ] Websocket support
+- [ ] Complete set of unit and integration tests
+- [ ] Split into a JSON-RPC Web/Socket module and the electrumx client module
 
 ## Usage
 
