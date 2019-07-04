@@ -35,3 +35,4 @@ build/Release
 
 # Typescript v1 declaration files
 typings/
+src/gen/protocol\.ts

@@ -15,7 +15,7 @@ export default class ElectrumClient {
     this.events = this._socketClient.events
   }
 
-  public async connect () {
+  public connect () {
     return this._socketClient.connect()
   }
 }

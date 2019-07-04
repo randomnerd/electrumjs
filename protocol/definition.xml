@@ -31,6 +31,18 @@
 		<param name="tx_hash" type="string" desc="The output’s transaction hash as a hexadecimal string"/>
 		<param name="value" type="number" desc="The output’s value in minimum coin units (satoshis)"/>
 	</struct>
+	<struct name="get_block_header" desc="result of 'blockchain.block.headers'">
+		<param name="header" type="string" desc="The raw block header as a hexadecimal string. Starting with version 1.4.1, AuxPoW data (if present in the original header) is truncated."/>
+		<param name="root" type="string" desc="The merkle root of all blockchain headers up to and including cp_height."/>
+		<param name="branch" type="array<string>" desc="The merkle branch of the last returned header up to root, deepest pairing first."/>
+	</struct>
+	<struct name="get_block_headers" desc="result of 'blockchain.block.headers'">
+		<param name="count" type="number" desc="The number of headers returned, between zero and the number requested. If the chain has not extended sufficiently far, only the available headers will be returned. If more headers than max were requested at most max will be returned."/>
+		<param name="hex" type="string" desc="The binary block headers concatenated together in-order as a hexadecimal string. Starting with version 1.4.1, AuxPoW data (if present in the original header) is truncated if cp_height is nonzero."/>
+		<param name="max" type="number" desc="The maximum number of headers the server will return in a single request."/>
+		<param name="root" type="string" desc="The merkle root of all blockchain headers up to and including cp_height."/>
+		<param name="branch" type="array<string>" desc="The merkle branch of the last returned header up to root, deepest pairing first."/>
+	</struct>
 
 	<!-- rpc -->
 
@@ -64,11 +76,20 @@
 		<param name="height" type="number" desc="The height of the block, an integer."/>
 	</request>
 
+	<request name="blockchain.block.header" dir="client" result="get_block_header" desc="Return the deserialized header of the block at the given height.">
+		<param name="height" type="number" desc="The height of the block, an integer."/>
+	</request>
+
+	<request name="blockchain.block.headers" dir="client" result="get_block_headers" desc="Return the deserialized header of the block at the given height.">
+		<param name="start_height" type="number" desc="The height of the first header requested, a non-negative integer."/>
+		<param name="count" type="number" desc="The number of headers requested, a non-negative integer."/>
+	</request>
+
 	<request name="blockchain.headers.subscribe" dir="client" result="block_header" desc="Subscribe to receive block headers when a new block is found.">
 		<param name="raw" type="boolean" default="true" desc="False or True. The value False is deprecated."/>
 	</request>
 	<notification name="blockchain.headers.subscribe" dir="server">
-		<param name="block_header" type="block_header" desc="The height and hex-serialized headers of a block."/>
+		<param name="block_header" type="array<block_header>" desc="The height and hex-serialized headers of a block."/>
 	</notification>
 
 	<!-- from 1.1 -->
@@ -119,7 +140,7 @@
 	<request name="blockchain.block.get_chunk" dir="client" result="string">
 		<param name="index" type="number" desc=""/>
 	</request>
-  
+
 	<request name="blockchain.address.get_balance" dir="client" result="scripthash_balance">
 		<param name="address" type="string" desc="The address as a Base58 string."/>
 	</request>
