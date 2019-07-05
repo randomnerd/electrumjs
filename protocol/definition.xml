@@ -85,9 +85,7 @@
 		<param name="count" type="number" desc="The number of headers requested, a non-negative integer."/>
 	</request>
 
-	<request name="blockchain.headers.subscribe" dir="client" result="block_header" desc="Subscribe to receive block headers when a new block is found.">
-		<param name="raw" type="boolean" default="true" desc="False or True. The value False is deprecated."/>
-	</request>
+	<request name="blockchain.headers.subscribe" dir="client" result="block_header" desc="Subscribe to receive block headers when a new block is found."/>
 	<notification name="blockchain.headers.subscribe" dir="server">
 		<param name="block_header" type="array<block_header>" desc="The height and hex-serialized headers of a block."/>
 	</notification>
@@ -98,6 +96,11 @@
 	</request>
 	<request name="blockchain.scripthash.get_history" dir="client" result="array<tx_info_history>" desc="Return the confirmed and unconfirmed history of a script hash.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
+	</request>
+	<request name="blockchain.transaction.id_from_pos" dir="client" result="object" desc="Return the confirmed and unconfirmed history of a script hash.">
+		<param name="height" type="number" desc="The main chain block height, a non-negative integer."/>
+		<param name="tx_pos" type="number" desc="A zero-based index of the transaction in the given block, an integer."/>
+		<param name="merkle" type="boolean" default="false" desc="Whether a merkle proof should also be returned, a boolean."/>
 	</request>
 	<request name="blockchain.scripthash.get_mempool" dir="client" result="array<tx_info_mempool>" desc="Return the unconfirmed transactions of a script hash.">
 		<param name="scripthash" type="string" desc="The script hash as a hexadecimal string."/>
