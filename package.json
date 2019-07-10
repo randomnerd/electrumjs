@@ -1,6 +1,6 @@
 {
   "name": "electrumjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Electrum protocol client for node.js",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",

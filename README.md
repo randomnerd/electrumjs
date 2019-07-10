@@ -42,7 +42,7 @@ This library provides a simple interface for a connection with an [ElectrumX ser
 ## Usage
 
 ```
-const electrumclient = require('electrum-client')
+const electrumclient = require('electrumjs')
 const Client = electrumclient.Client
 
 // version control interface
