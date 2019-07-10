@@ -2,7 +2,7 @@ import { JSONRPCSocketClient, IJSONRPCSocketClient } from './json-rpc-socket/cli
 import { ElectrumProtocol } from './gen/protocol'
 import { EventEmitter } from 'events'
 
-export default class ElectrumClient {
+export class ElectrumClient {
   private _socketClient: IJSONRPCSocketClient
   public methods: ElectrumProtocol
   public events: EventEmitter
@@ -19,3 +19,5 @@ export default class ElectrumClient {
     return this._socketClient.connect()
   }
 }
+
+export default ElectrumClient

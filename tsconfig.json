@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "es2016",
     "rootDir": "./src",
     "outDir": "./dist",
     "noImplicitAny": false,
@@ -9,12 +9,13 @@
     "removeComments": false,
     "moduleResolution": "node",
     "strict": true,
-    "lib": ["es6"],
+    "lib": ["es2016"],
     "esModuleInterop": true,
+    "allowUmdGlobalAccess": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": true
   },
   "exclude": [
-    "node_modules",
     "src/**/*.spec.*"
   ],
   "include": [
