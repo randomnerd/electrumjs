@@ -32,7 +32,7 @@
     "coveralls": "^3.0.4",
     "docco": "^0.8.0",
     "electrum-host-parse": "*",
-    "mocha": "^6.1.4",
+    "mocha": "^10.1.0",
     "npm-check": "^5.9.0",
     "nyc": "^14.1.1",
     "pre-commit": "^1.2.2",
